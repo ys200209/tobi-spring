@@ -10,7 +10,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 class TestBeanCallTest {
     @Test
     void testCallSingletonBean() {
-        ApplicationContext config = new AnnotationConfigApplicationContext(TestBeanConfig.class);
+        ApplicationContext config = new AnnotationConfigApplicationContext(TestBean.class);
         TestBean getTestBean1 = config.getBean("testBean", TestBean.class);
         TestBean getTestBean2 = config.getBean("testBean", TestBean.class);
         TestBean newTestBean1 = new TestBean();
