@@ -1,7 +1,8 @@
-package com.example.tobispring;
+package com.example.tobispring.chap01;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.example.tobispring.TestBean;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationContext;
