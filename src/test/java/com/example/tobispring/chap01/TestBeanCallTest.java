@@ -24,4 +24,17 @@ class TestBeanCallTest {
         assertEquals(getTestBean1, getTestBean2);
     }
 
+    @DisplayName("Bean stateless")
+    @Test
+    void testBeanStateless() {
+        ApplicationContext config = new AnnotationConfigApplicationContext(TestBean.class);
+        TestBean getTestBean1 = config.getBean("testBean", TestBean.class);
+        getTestBean1.increaseCount();
+
+        TestBean getTestBean2 = config.getBean("testBean", TestBean.class);
+
+        System.out.println("getTestBean1 = " + getTestBean1);
+        System.out.println("getTestBean2 = " + getTestBean2);
+    }
+
 }
