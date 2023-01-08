@@ -1,4 +1,4 @@
-package com.example.tobispring;
+package com.example.tobispring.chap01.di;
 
 public class TestBean {
     private int count = 0;
