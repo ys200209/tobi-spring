@@ -1,7 +1,6 @@
 package com.example.tobispring.chap03;
 
 import com.example.tobispring.chap03.connection.ConnectionMaker;
-import com.example.tobispring.chap03.strategy.StatementStrategy;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -113,10 +112,13 @@ public class UserDao {
     }
 
     public void deleteAll() throws SQLException {
-        jdbcContext.workWithStatementStrategy(
-                c -> c.prepareStatement(DELETE_USER_QUERY));
-
+        executeSql(DELETE_USER_QUERY);
         System.out.println("회원 삭제 성공");
+    }
+
+    private void executeSql(String query) throws SQLException {
+        jdbcContext.workWithStatementStrategy(
+                c -> c.prepareStatement(query));
     }
 
     public int getCount() throws SQLException {
