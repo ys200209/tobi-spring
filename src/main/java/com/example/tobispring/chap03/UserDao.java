@@ -112,14 +112,11 @@ public class UserDao {
     }
 
     public void deleteAll() throws SQLException {
-        executeSql(DELETE_USER_QUERY);
+        jdbcContext.executeSql(DELETE_USER_QUERY);
         System.out.println("회원 삭제 성공");
     }
 
-    private void executeSql(String query) throws SQLException {
-        jdbcContext.workWithStatementStrategy(
-                c -> c.prepareStatement(query));
-    }
+
 
     public int getCount() throws SQLException {
         Connection c = null;
