@@ -1,12 +1,12 @@
-package com.example.tobispring.chap03.connection;
+package com.example.tobispring.chap05.connection;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 
-public class NConnectionMaker implements ConnectionMaker {
+public class DConnectionMaker implements ConnectionMaker {
     @Override
     public Connection makeNewConnection() throws ClassNotFoundException, SQLException {
-        // N 커넥션 생성
+        // D 커넥션 생성
         return null;
     }
 }

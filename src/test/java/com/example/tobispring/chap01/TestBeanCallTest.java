@@ -2,7 +2,7 @@ package com.example.tobispring.chap01;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.example.tobispring.TestBean;
+import com.example.tobispring.chap01.di.TestBean;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationContext;
