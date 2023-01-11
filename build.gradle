@@ -15,6 +15,14 @@ repositories {
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    // https://mvnrepository.com/artifact/mysql/mysql-connector-java
+    implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.21'
+
+    // SimpleDriverDataSource
+//  implementation 'org.springframework.jdbc-3.0.7.RELEASE.jar'
+    implementation group: 'org.springframework', name: 'spring-jdbc', version: '3.0.7.RELEASE'
+
 }
 
 tasks.named('test') {
