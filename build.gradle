@@ -21,7 +21,8 @@ dependencies {
 
     // SimpleDriverDataSource
 //  implementation 'org.springframework.jdbc-3.0.7.RELEASE.jar'
-    implementation group: 'org.springframework', name: 'spring-jdbc', version: '3.0.7.RELEASE'
+//    implementation group: 'org.springframework', name: 'spring-jdbc', version: '3.0.7.RELEASE'
+    implementation group: 'org.springframework', name: 'spring-jdbc', version: '5.0.3.RELEASE'
 
 }
 

@@ -1,4 +1,4 @@
-package com.example.tobispring.chap03;
+package com.example.tobispring.chap05.study;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
