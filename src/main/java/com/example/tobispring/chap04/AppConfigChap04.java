@@ -1,17 +1,14 @@
-package com.example.tobispring;
+package com.example.tobispring.chap04;
 
 import com.example.tobispring.chap04.user.dao.UserDao;
 import com.example.tobispring.chap04.user.dao.UserDaoJdbc;
-import java.sql.DriverManager;
 import javax.sql.DataSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.SimpleDriverDataSource;
-import org.springframework.stereotype.Component;
 
 @Configuration
-public class AppConfig {
+public class AppConfigChap04 {
     @Bean
     public UserDao userDao() {
         UserDaoJdbc userDaoJdbc = new UserDaoJdbc();

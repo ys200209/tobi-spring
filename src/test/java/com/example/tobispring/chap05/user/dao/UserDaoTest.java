@@ -1,28 +1,28 @@
-package com.example.tobispring.chap04.user.dao;
+package com.example.tobispring.chap05.user.dao;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.example.tobispring.chap04.AppConfigChap04;
-import com.example.tobispring.chap04.user.domain.User;
+import com.example.tobispring.chap05.AppConfigChap05;
+import com.example.tobispring.chap05.user.dao.UserDao;
+import com.example.tobispring.chap05.user.domain.Level;
+import com.example.tobispring.chap05.user.domain.User;
 import java.sql.SQLException;
 import java.util.List;
 import javax.sql.DataSource;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.dao.DataAccessException;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator;
-import org.springframework.jdbc.support.SQLExceptionTranslator;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 //@RunWith(SpringJUnit4ClassRunner.class)
 //@ContextConfiguration(locations="/test-applicationContext.xml")
-@SpringBootTest(classes = AppConfigChap04.class)
+@SpringBootTest(classes = AppConfigChap05.class)
 public class UserDaoTest {
     @Autowired
     UserDao dao;
@@ -35,9 +35,9 @@ public class UserDaoTest {
 
     @BeforeEach
     public void setUp() {
-        this.user1 = new User("gyumee", "이름 1", "springno1");
-        this.user2 = new User("leegw700", "이름 2", "springno2");
-        this.user3 = new User("bumjin", "이름 3", "springno3");
+        this.user1 = new User("gyumee", "이름 1", "springno1", Level.BASIC, 1, 0);
+        this.user2 = new User("leegw700", "이름 2", "springno2", Level.SILVER, 55, 10);
+        this.user3 = new User("bumjin", "이름 3", "springno3", Level.GOLD, 100, 40);
     }
 
     @Test
@@ -50,12 +50,10 @@ public class UserDaoTest {
         assertEquals(dao.getCount(), 2);
 
         User userget1 = dao.get(user1.getId());
-        assertEquals(userget1.getName(), user1.getName());
-        assertEquals(userget1.getPassword(), user1.getPassword());
+        checkSameUser(userget1, user1);
 
         User userget2 = dao.get(user2.getId());
-        assertEquals(userget2.getName(), user2.getName());
-        assertEquals(userget2.getPassword(), user2.getPassword());
+        checkSameUser(userget2, user2);
     }
 
     @Test
@@ -67,7 +65,6 @@ public class UserDaoTest {
         assertThatThrownBy(() -> dao.get("unknown_id"))
                 .isInstanceOf(EmptyResultDataAccessException.class);
     }
-
 
     @Test
     public void count() {
@@ -114,10 +111,13 @@ public class UserDaoTest {
         assertEquals(user1.getId(), user2.getId());
         assertEquals(user1.getName(), user2.getName());
         assertEquals(user1.getPassword(), user2.getPassword());
+        assertEquals(user1.getLevel(), user2.getLevel());
+        assertEquals(user1.getLogin(), user2.getLogin());
+        assertEquals(user1.getRecommend(), user2.getRecommend());
     }
 
     @Test
-    public void duplciateKey() {
+    public void duplicateKey() {
         dao.deleteAll();
 
         dao.add(user1);
@@ -133,5 +133,28 @@ public class UserDaoTest {
 
         assertThatThrownBy(() -> dao.add(user1))
                 .isInstanceOf(DuplicateKeyException.class);
+    }
+
+    @Test
+    void update() {
+        // given
+        dao.deleteAll();
+        dao.add(user1);
+        dao.add(user2);
+
+        // when
+        user1.setName("변경된 이름");
+        user1.setPassword("변경된 패스워드");
+        user1.setLevel(Level.GOLD);
+        user1.setLogin(1000);
+        user1.setRecommend(999);
+        dao.update(user1);
+
+        // then
+        User updateUser = dao.get(user1.getId());
+        assertEquals(user1, updateUser);
+        user1.equals(updateUser);
+        User notUpdateUser = dao.get(user2.getId());
+        assertEquals(user2, notUpdateUser);
     }
 }

@@ -2,7 +2,6 @@ package com.example.tobispring.chap03;
 
 import com.example.tobispring.chap01.DaoFactory;
 import com.example.tobispring.chap01.UserDao;
-import com.example.tobispring.chap05.Level;
 import java.sql.SQLException;
 import javax.sql.DataSource;
 import org.junit.jupiter.api.BeforeEach;
