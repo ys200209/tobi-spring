@@ -2,17 +2,17 @@ package com.example.tobispring.chap05.user.domain;
 
 import java.util.Objects;
 
-public class LevelStatus {
+public class LevelUpgradeStatus {
     public static final int UPGRADE_LOGIN_COUNT_LOWER_BOUND = 50;
     public static final int UPGRADE_RECOMMEND_COUNT_LOWER_BOUND = 30;
 
     private int login;
     private int recommend;
 
-    public LevelStatus() {
+    public LevelUpgradeStatus() {
     }
 
-    public LevelStatus(int login, int recommend) {
+    public LevelUpgradeStatus(int login, int recommend) {
         this.login = login;
         this.recommend = recommend;
     }
@@ -50,7 +50,7 @@ public class LevelStatus {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        LevelStatus that = (LevelStatus) o;
+        LevelUpgradeStatus that = (LevelUpgradeStatus) o;
         return login == that.login && recommend == that.recommend;
     }
 

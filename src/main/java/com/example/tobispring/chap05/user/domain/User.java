@@ -8,18 +8,18 @@ public class User {
     private String name;
     private String password;
     private Level level;
-    private LevelStatus levelStatus;
+    private LevelUpgradeStatus levelUpgradeStatus;
 
     public User(String id, String name, String password, Level level, int login, int recommend) {
         this.id = id;
         this.name = name;
         this.password = password;
         this.level = level;
-        this.levelStatus = new LevelStatus(login, recommend);
+        this.levelUpgradeStatus = new LevelUpgradeStatus(login, recommend);
     }
 
     public User() {
-        this.levelStatus = new LevelStatus();
+        this.levelUpgradeStatus = new LevelUpgradeStatus();
     }
 
     public String getId() {
@@ -55,19 +55,19 @@ public class User {
     }
 
     public void setLogin(int login) {
-        this.levelStatus.setLogin(login);
+        this.levelUpgradeStatus.setLogin(login);
     }
 
     public int getLogin() {
-        return this.levelStatus.getLogin();
+        return this.levelUpgradeStatus.getLogin();
     }
 
     public void setRecommend(int recommend) {
-        this.levelStatus.setRecommend(recommend);
+        this.levelUpgradeStatus.setRecommend(recommend);
     }
 
     public int getRecommend() {
-        return this.levelStatus.getRecommend();
+        return this.levelUpgradeStatus.getRecommend();
     }
 
     public void upgradeLevel() {
@@ -78,7 +78,7 @@ public class User {
     }
 
     public boolean canUpgradeLevel() {
-        return level.canUpgradeLevel(levelStatus);
+        return level.canUpgradeLevel(levelUpgradeStatus);
     }
 
     @Override
@@ -92,11 +92,11 @@ public class User {
         User user = (User) o;
         return Objects.equals(id, user.id) && Objects.equals(name, user.name)
                 && Objects.equals(password, user.password) && level == user.level && Objects.equals(
-                levelStatus, user.levelStatus);
+                levelUpgradeStatus, user.levelUpgradeStatus);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, password, level, levelStatus);
+        return Objects.hash(id, name, password, level, levelUpgradeStatus);
     }
 }

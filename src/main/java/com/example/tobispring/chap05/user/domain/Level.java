@@ -5,14 +5,14 @@ import java.util.function.Function;
 
 public enum Level {
     GOLD(3, null, loginStatus -> false),
-    SILVER(2, GOLD, LevelStatus::isOverUpgradeRecommendCount),
-    BASIC(1, SILVER, LevelStatus::isOverUpgradeLoginCount);
+    SILVER(2, GOLD, LevelUpgradeStatus::isOverUpgradeRecommendCount),
+    BASIC(1, SILVER, LevelUpgradeStatus::isOverUpgradeLoginCount);
 
     private final int value;
     private final Level next;
-    private final Function<LevelStatus, Boolean> function;
+    private final Function<LevelUpgradeStatus, Boolean> function;
 
-    Level(int value, Level next, Function<LevelStatus, Boolean> function) {
+    Level(int value, Level next, Function<LevelUpgradeStatus, Boolean> function) {
         this.value = value;
         this.next = next;
         this.function = function;
@@ -40,10 +40,10 @@ public enum Level {
         return false;
     }
 
-    public boolean canUpgradeLevel(LevelStatus levelStatus) {
+    public boolean canUpgradeLevel(LevelUpgradeStatus levelUpgradeStatus) {
         return Arrays.stream(values())
                 .filter(level -> this == level)
-                .map(level -> level.function.apply(levelStatus))
+                .map(level -> level.function.apply(levelUpgradeStatus))
                 .findFirst()
                 .orElseThrow(() -> new AssertionError("존재하지 않는 레벨입니다."));
     }
