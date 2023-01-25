@@ -3,15 +3,12 @@ package com.example.tobispring.chap05.user.service;
 import com.example.tobispring.chap05.user.dao.UserDao;
 import com.example.tobispring.chap05.user.domain.Level;
 import com.example.tobispring.chap05.user.domain.User;
-import java.sql.Connection;
 import java.util.List;
-import javax.sql.DataSource;
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-import org.springframework.jdbc.datasource.DataSourceUtils;
+import java.util.Properties;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
+import org.springframework.mail.SimpleMailMessage;
 
 public class UserService {
     UserDao userDao;
@@ -59,5 +56,15 @@ public class UserService {
     private void upgradeLevelAndUpdateDao(User user) {
         user.upgradeLevel();
         userDao.update(user);
+        sendUpgradeEMail(user);
+    }
+
+    private void sendUpgradeEMail(User user) {
+        Properties props = new Properties();
+        props.put("mail.smtp.host", "mail.ksum.org");
+        Session s = Session.getInstance(props, null);
+
+        MimeMessage message = new MimeMessage();
+        SimpleMailMessage
     }
 }

@@ -14,6 +14,7 @@ repositories {
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'me.minidigger:MiniMessage:2.1.0'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
     // https://mvnrepository.com/artifact/mysql/mysql-connector-java
@@ -23,6 +24,12 @@ dependencies {
 //  implementation 'org.springframework.jdbc-3.0.7.RELEASE.jar'
 //    implementation group: 'org.springframework', name: 'spring-jdbc', version: '3.0.7.RELEASE'
     implementation group: 'org.springframework', name: 'spring-jdbc', version: '5.0.3.RELEASE'
+
+
+    // mail
+//    com.springsource.javax.mail-1.4.0.jar
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-mail', version: '2.2.6.RELEASE'
+
 
 }
 
