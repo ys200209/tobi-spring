@@ -19,7 +19,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.PlatformTransactionManager;
 
 @SpringBootTest(classes = AppConfigChap05.class)
-class UserServiceTest {
+class UserServiceImplTest {
     @Autowired
     UserDao userDao;
     @Autowired
