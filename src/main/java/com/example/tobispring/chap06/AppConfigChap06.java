@@ -16,7 +16,7 @@ public class AppConfigChap06 {
     public UserServiceImpl userService() {
         UserServiceImpl userServiceImpl = new UserServiceImpl();
         userServiceImpl.setUserDao(userDao());
-        userServiceImpl.setTransactionManager(transactionManager());
+//        userServiceImpl.setTransactionManager(transactionManager());
         return userServiceImpl;
     }
 
