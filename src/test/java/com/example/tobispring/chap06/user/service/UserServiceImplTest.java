@@ -21,6 +21,8 @@ class UserServiceImplTest {
     @Autowired
     UserDao userDao;
     @Autowired
+    UserService userService;
+    @Autowired
     UserServiceImpl userServiceImpl;
     @Autowired
     DataSource dataSource;
@@ -79,11 +81,19 @@ class UserServiceImplTest {
     }
 
     @Test
-    void upgradeAllOrNothing() throws Exception {
+    void upgradeAllOrNothing() {
         // given
-        UserServiceImpl testUserServiceImpl = new TestUserServiceImpl(users.get(3).getId());
+        /*UserServiceImpl testUserServiceImpl = new TestUserServiceImpl(users.get(3).getId());
         testUserServiceImpl.setUserDao(this.userDao);
-        testUserServiceImpl.setTransactionManager(transactionManager);
+        testUserServiceImpl.setTransactionManager(transactionManager);*/
+
+        TestUserService testUserService = new TestUserService(users.get(3).getId());
+        testUserService.setUserDao(this.userDao);
+
+        UserServiceTx txUserService = new UserServiceTx();
+        txUserService.setTransactionManager(transactionManager);
+        txUserService.setUserService(testUserService);
+
         userDao.deleteAll();
         for (User user : users) {
             userDao.add(user);
@@ -91,7 +101,7 @@ class UserServiceImplTest {
 
         // when
         try {
-            testUserServiceImpl.upgradeLevels();
+            txUserService.upgradeLevels();
             Assertions.fail("TestUserServiceException expected");
         } catch (TestUserServiceException ex) {
         }
@@ -114,6 +124,22 @@ class UserServiceImplTest {
             assertEquals(updateUser.getLevel(), user.getLevel().nextLevel());
         } else {
             assertEquals(updateUser.getLevel(), user.getLevel());
+        }
+    }
+
+    static class TestUserService extends UserServiceImpl {
+        private String id;
+
+        private TestUserService(String id) {
+            this.id = id;
+        }
+
+        @Override
+        protected void upgradeLevel(User user) {
+            if (user.getId().equals(id)) { // id 를 가진 사용자가 들어오면 예외를 발생시킴
+                throw new TestUserServiceException();
+            }
+            super.upgradeLevel(user);
         }
     }
 
