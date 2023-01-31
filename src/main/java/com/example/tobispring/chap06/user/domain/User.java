@@ -9,13 +9,23 @@ public class User {
     private String password;
     private Level level;
     private LevelUpgradeStatus levelUpgradeStatus;
+    private String email;
 
-    public User(String id, String name, String password, Level level, int login, int recommend) {
+
+    /*public User(String id, String name, String password, Level level, int login, int recommend) {
         this.id = id;
         this.name = name;
         this.password = password;
         this.level = level;
         this.levelUpgradeStatus = new LevelUpgradeStatus(login, recommend);
+    }*/
+    public User(String id, String name, String password, Level level, int login, int recommend, String email) {
+        this.id = id;
+        this.name = name;
+        this.password = password;
+        this.level = level;
+        this.levelUpgradeStatus = new LevelUpgradeStatus(login, recommend);
+        this.email = email;
     }
 
     public User() {
@@ -68,6 +78,10 @@ public class User {
 
     public int getRecommend() {
         return this.levelUpgradeStatus.getRecommend();
+    }
+
+    public String getEmail() {
+        return email;
     }
 
     public void upgradeLevel() {

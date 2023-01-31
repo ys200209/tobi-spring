@@ -1,11 +1,20 @@
 package com.example.tobispring.chap06.user.service;
 
+import static com.example.tobispring.chap06.user.domain.Level.GOLD;
+import static com.example.tobispring.chap06.user.domain.Level.SILVER;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import com.example.tobispring.chap06.AppConfigChap06;
 import com.example.tobispring.chap06.user.dao.UserDao;
 import com.example.tobispring.chap06.user.domain.Level;
 import com.example.tobispring.chap06.user.domain.User;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javax.sql.DataSource;
@@ -33,11 +42,11 @@ class UserServiceImplTest {
     @BeforeEach
     void setUp() {
         users = Arrays.asList(
-                new User("idA", "nameA", "passwordA", Level.BASIC, 49, 0),
-                new User("idB", "nameB", "passwordB", Level.BASIC, 50, 0), // 대상
-                new User("idC", "nameC", "passwordC", Level.SILVER, 60, 29),
-                new User("idD", "nameD", "passwordD", Level.SILVER, 60, 30), // 대상
-                new User("idE", "nameE", "passwordE", Level.GOLD, 100, 100));
+                new User("idA", "nameA", "passwordA", Level.BASIC, 49, 0, "emailA"),
+                new User("idB", "nameB", "passwordB", Level.BASIC, 50, 0, "emailB"), // 대상
+                new User("idC", "nameC", "passwordC", SILVER, 60, 29, "emailC"),
+                new User("idD", "nameD", "passwordD", SILVER, 60, 30, "emailD"), // 대상
+                new User("idE", "nameE", "passwordE", GOLD, 100, 100, "emailE"));
     }
 
     @Test
@@ -61,7 +70,7 @@ class UserServiceImplTest {
         assertEquals(userWithoutLevelRead.getLevel(), Level.BASIC);
     }
 
-    @Test
+    /*@Test 리팩토링 전 upgradeLevels()
     void upgradeLevels() {
         // given
         userDao.deleteAll();
@@ -78,7 +87,50 @@ class UserServiceImplTest {
         checkLevelUpgraded(users.get(2), false);
         checkLevelUpgraded(users.get(3), true);
         checkLevelUpgraded(users.get(4), false);
+    }*/
+
+    /*@Test // 목 클래스 생성 후 upgradeLevels()
+    void upgradeLevels() {
+        // given
+        UserServiceImpl userServiceImpl = new UserServiceImpl();
+        MockUserDao mockUserDao = new MockUserDao(users);
+        userServiceImpl.setUserDao(mockUserDao);
+
+        // when
+        userServiceImpl.upgradeLevels();
+        List<User> updated = mockUserDao.getUpdated();
+
+        // then
+        assertEquals(updated.size(), 2);
+        checkUserAndLevel(updated.get(0), "idB", Level.SILVER);
+        checkUserAndLevel(updated.get(1), "idD", Level.GOLD);
+    }*/
+
+    @Test // Mockito를 적용한 upgradeLevels()
+    void mockUpgradeLevels() {
+        // given
+        UserServiceImpl userServiceImpl = new UserServiceImpl();
+
+        UserDao mockUserDao = mock(UserDao.class);
+        when(mockUserDao.getAll()).thenReturn(users);
+        userServiceImpl.setUserDao(mockUserDao);
+
+        // when
+        userServiceImpl.upgradeLevels();
+
+        // then
+        verify(mockUserDao, times(2)).update(any(User.class));
+        verify(mockUserDao, times(2)).update(any(User.class)); // update( ) 메서드의 파라미터로 User 클래스 어떤것이든 상관없다.
+        verify(mockUserDao).update(users.get(1)); // update( ) 메서드의 파라미터로 users.get(1) 에 해당하는 파라미터여야 한다.
+        assertEquals(users.get(1).getLevel(), SILVER);
+        verify(mockUserDao).update(users.get(3)); // update( ) 메서드의 파라미터로 users.get(3) 에 해당하는 파라미터여야 한다.
+        assertEquals(users.get(3).getLevel(), GOLD);
     }
+
+    /*private void checkUserAndLevel(User updated, String expectedId, Level expectedLevel) {
+        assertEquals(updated.getId(), expectedId);
+        assertEquals(updated.getLevel(), expectedLevel);
+    }*/
 
     @Test
     void upgradeAllOrNothing() {
@@ -124,6 +176,49 @@ class UserServiceImplTest {
             assertEquals(updateUser.getLevel(), user.getLevel().nextLevel());
         } else {
             assertEquals(updateUser.getLevel(), user.getLevel());
+        }
+    }
+
+    static class MockUserDao implements UserDao {
+        private List<User> users;
+        private List<User> updated = new ArrayList<>();
+
+        public MockUserDao(List<User> users) {
+            this.users = users;
+        }
+
+        public List<User> getUpdated() {
+            return updated;
+        }
+
+        @Override
+        public List<User> getAll() {
+            return users;
+        }
+
+        @Override
+        public void update(User updateUser) {
+            updated.add(updateUser);
+        }
+
+        @Override
+        public void add(User user) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public User get(String id) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void deleteAll() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public int getCount() {
+            throw new UnsupportedOperationException();
         }
     }
 
