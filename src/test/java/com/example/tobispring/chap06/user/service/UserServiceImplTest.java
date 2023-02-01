@@ -11,9 +11,11 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.example.tobispring.chap06.AppConfigChap06;
+import com.example.tobispring.chap06.user.aop.TransactionHandler;
 import com.example.tobispring.chap06.user.dao.UserDao;
 import com.example.tobispring.chap06.user.domain.Level;
 import com.example.tobispring.chap06.user.domain.User;
+import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -135,16 +137,22 @@ class UserServiceImplTest {
     @Test
     void upgradeAllOrNothing() {
         // given
-        /*UserServiceImpl testUserServiceImpl = new TestUserServiceImpl(users.get(3).getId());
-        testUserServiceImpl.setUserDao(this.userDao);
-        testUserServiceImpl.setTransactionManager(transactionManager);*/
-
         TestUserService testUserService = new TestUserService(users.get(3).getId());
         testUserService.setUserDao(this.userDao);
 
-        UserServiceTx txUserService = new UserServiceTx();
+        /*UserServiceTx txUserService = new UserServiceTx();
         txUserService.setTransactionManager(transactionManager);
-        txUserService.setUserService(testUserService);
+        txUserService.setUserService(testUserService);*/
+
+        TransactionHandler txHandler = new TransactionHandler();
+        txHandler.setTarget(testUserService);
+        txHandler.setTransactionManager(transactionManager);
+        txHandler.setPattern("upgradeLevels");
+
+        UserService txUserService = (UserService) Proxy.newProxyInstance(
+                getClass().getClassLoader(),
+                new Class[]{UserService.class},
+                txHandler);
 
         userDao.deleteAll();
         for (User user : users) {
@@ -159,7 +167,6 @@ class UserServiceImplTest {
         }
 
         // then
-
         checkLevelUpgraded(users.get(1), false);
     }
 
