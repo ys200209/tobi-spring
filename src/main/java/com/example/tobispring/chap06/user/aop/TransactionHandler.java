@@ -7,10 +7,10 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
-public class TransactionHandler implements InvocationHandler {
-    private Object target;
-    private PlatformTransactionManager transactionManager;
-    private String pattern;
+public class TransactionHandler implements InvocationHandler { // Dynamic Proxy가 '참조할' InvocationHandler (Dynamic Proxy는 프록시 팩토리에 의해 런타임 시 생성되는 오브젝트다.)
+    private Object target; // 부가기능을 제공할 타깃 오브젝트
+    private PlatformTransactionManager transactionManager; // 트랜잭션 기능을 제공하는 매니저
+    private String pattern; // 트랜잭션을 적용할 메서드 이름 패턴
 
     public void setTarget(Object target) {
         this.target = target;
@@ -26,7 +26,7 @@ public class TransactionHandler implements InvocationHandler {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-        if (method.getName().startsWith(pattern)) {
+        if (method.getName().startsWith(pattern)) { // pattern으로 시작하는 메서드 이름에 트랜잭션 부가기능 적용
             return invokeInTransaction(method, args);
         }
         return method.invoke(target, args);
