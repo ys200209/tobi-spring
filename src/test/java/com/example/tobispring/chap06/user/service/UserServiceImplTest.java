@@ -23,8 +23,11 @@ import javax.sql.DataSource;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.aop.framework.ProxyFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.ApplicationContext;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.transaction.PlatformTransactionManager;
 
 @SpringBootTest(classes = AppConfigChap06.class)
@@ -40,6 +43,8 @@ class UserServiceImplTest {
     @Autowired
     PlatformTransactionManager transactionManager;
     List<User> users;
+    @Autowired
+    ApplicationContext context;
 
     @BeforeEach
     void setUp() {
@@ -135,24 +140,24 @@ class UserServiceImplTest {
     }*/
 
     @Test
+    @DirtiesContext
     void upgradeAllOrNothing() {
         // given
         TestUserService testUserService = new TestUserService(users.get(3).getId());
         testUserService.setUserDao(this.userDao);
 
-        /*UserServiceTx txUserService = new UserServiceTx();
-        txUserService.setTransactionManager(transactionManager);
-        txUserService.setUserService(testUserService);*/
-
-        TransactionHandler txHandler = new TransactionHandler();
+        /*TransactionHandler txHandler = new TransactionHandler();
         txHandler.setTarget(testUserService);
         txHandler.setTransactionManager(transactionManager);
         txHandler.setPattern("upgradeLevels");
-
         UserService txUserService = (UserService) Proxy.newProxyInstance(
                 getClass().getClassLoader(),
                 new Class[]{UserService.class},
-                txHandler);
+                txHandler);*/
+
+        ProxyFactoryBean txProxyFactoryBean = context.getBean("&userService", ProxyFactoryBean.class);
+        txProxyFactoryBean.setTarget(testUserService);
+        UserService txUserService = (UserService) txProxyFactoryBean.getObject();
 
         userDao.deleteAll();
         for (User user : users) {

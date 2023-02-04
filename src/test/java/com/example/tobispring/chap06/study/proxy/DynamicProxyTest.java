@@ -8,8 +8,11 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.aop.framework.ProxyFactoryBean;
+import org.springframework.aop.support.DefaultPointcutAdvisor;
+import org.springframework.aop.support.NameMatchMethodPointcut;
 
 public class DynamicProxyTest {
     @Test
@@ -47,5 +50,25 @@ public class DynamicProxyTest {
             String ret = (String) invocation.proceed();
             return ret.toUpperCase();
         }
+    }
+
+    @Test
+    void testPointcutAdvisor() {
+        // given
+        ProxyFactoryBean factoryBean = new ProxyFactoryBean();
+        factoryBean.setTarget(new HelloTarget());
+
+        NameMatchMethodPointcut pointcut = new NameMatchMethodPointcut();
+        pointcut.setMappedName("sayH*");
+
+        // when
+        factoryBean.addAdvisor(new DefaultPointcutAdvisor(pointcut, new UppercaseAdvice()));
+
+        Hello proxiedHello = (Hello) factoryBean.getObject();
+
+        // then
+        assertEquals(proxiedHello.sayHello("Toby"), "HELLO TOBY"); // advice 적용
+        assertEquals(proxiedHello.sayHi("Toby"), "HI TOBY"); // advice 적용
+        assertEquals(proxiedHello.sayThankYou("Toby"), "Thank You Toby"); // advice 적용 대상 예외 (pointcut)
     }
 }
