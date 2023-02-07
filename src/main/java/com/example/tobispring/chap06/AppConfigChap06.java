@@ -1,11 +1,14 @@
 package com.example.tobispring.chap06;
 
+import com.example.tobispring.chap06.user.aop.NameMatchClassMethodPointcut;
 import com.example.tobispring.chap06.user.aop.TransactionAdvice;
 import com.example.tobispring.chap06.user.dao.UserDao;
 import com.example.tobispring.chap06.user.dao.UserDaoJdbc;
+import com.example.tobispring.chap06.user.service.UserService;
 import com.example.tobispring.chap06.user.service.UserServiceImpl;
 import javax.sql.DataSource;
 import org.springframework.aop.framework.ProxyFactoryBean;
+import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.aop.support.DefaultPointcutAdvisor;
 import org.springframework.aop.support.NameMatchMethodPointcut;
 import org.springframework.context.annotation.Bean;
@@ -36,9 +39,10 @@ public class AppConfigChap06 {
     }
 
     @Bean
-    public NameMatchMethodPointcut transactionPointcut() { // 트랜잭션 포인트 컷 빈 (upgrade로 시작하는 메서드)
-        NameMatchMethodPointcut pointcut = new NameMatchMethodPointcut();
-        pointcut.setMappedName("upgrade*");
+    public NameMatchClassMethodPointcut transactionPointcut() { // 트랜잭션 포인트 컷 빈 (upgrade로 시작하는 메서드)
+        NameMatchClassMethodPointcut pointcut = new NameMatchClassMethodPointcut();
+        pointcut.setMappedClassName("*ServiceImpl"); // 클래스 이름 패턴
+        pointcut.setMappedName("upgrade*"); // 메소드 이름 패턴
         return pointcut;
     }
 
@@ -48,18 +52,23 @@ public class AppConfigChap06 {
     }
 
     @Bean
-    public UserServiceImpl userServiceImpl() {
-        UserServiceImpl userServiceImpl = new UserServiceImpl();
-        userServiceImpl.setUserDao(userDao());
-        return userServiceImpl;
+    public UserService userServiceImpl() {
+        UserServiceImpl userService = new UserServiceImpl();
+        userService.setUserDao(userDao());
+        return userService;
     }
 
-    @Bean
+    /*@Bean
     public ProxyFactoryBean userService() {
         ProxyFactoryBean proxyFactoryBean = new ProxyFactoryBean();
         proxyFactoryBean.setTarget(userServiceImpl());
         proxyFactoryBean.setInterceptorNames("transactionAdvisor");
         return proxyFactoryBean;
+    }*/
+
+    @Bean
+    public DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator() {
+        return new DefaultAdvisorAutoProxyCreator();
     }
 
     @Bean

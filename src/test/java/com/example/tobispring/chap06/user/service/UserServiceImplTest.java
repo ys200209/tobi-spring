@@ -2,7 +2,6 @@ package com.example.tobispring.chap06.user.service;
 
 import static com.example.tobispring.chap06.user.domain.Level.GOLD;
 import static com.example.tobispring.chap06.user.domain.Level.SILVER;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -11,11 +10,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.example.tobispring.chap06.AppConfigChap06;
-import com.example.tobispring.chap06.user.aop.TransactionHandler;
 import com.example.tobispring.chap06.user.dao.UserDao;
 import com.example.tobispring.chap06.user.domain.Level;
 import com.example.tobispring.chap06.user.domain.User;
-import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -23,11 +20,10 @@ import javax.sql.DataSource;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.aop.framework.ProxyFactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
-import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.PlatformTransactionManager;
 
 @SpringBootTest(classes = AppConfigChap06.class)
@@ -35,9 +31,9 @@ class UserServiceImplTest {
     @Autowired
     UserDao userDao;
     @Autowired
-    UserService userService;
-    @Autowired
     UserServiceImpl userServiceImpl;
+    @Autowired
+    UserService testUserServiceImpl;
     @Autowired
     DataSource dataSource;
     @Autowired
@@ -140,25 +136,8 @@ class UserServiceImplTest {
     }*/
 
     @Test
-    @DirtiesContext
     void upgradeAllOrNothing() {
         // given
-        TestUserService testUserService = new TestUserService(users.get(3).getId());
-        testUserService.setUserDao(this.userDao);
-
-        /*TransactionHandler txHandler = new TransactionHandler();
-        txHandler.setTarget(testUserService);
-        txHandler.setTransactionManager(transactionManager);
-        txHandler.setPattern("upgradeLevels");
-        UserService txUserService = (UserService) Proxy.newProxyInstance(
-                getClass().getClassLoader(),
-                new Class[]{UserService.class},
-                txHandler);*/
-
-        ProxyFactoryBean txProxyFactoryBean = context.getBean("&userService", ProxyFactoryBean.class);
-        txProxyFactoryBean.setTarget(testUserService);
-        UserService txUserService = (UserService) txProxyFactoryBean.getObject();
-
         userDao.deleteAll();
         for (User user : users) {
             userDao.add(user);
@@ -166,7 +145,7 @@ class UserServiceImplTest {
 
         // when
         try {
-            txUserService.upgradeLevels();
+            this.testUserServiceImpl.upgradeLevels();
             Assertions.fail("TestUserServiceException expected");
         } catch (TestUserServiceException ex) {
         }
@@ -250,12 +229,9 @@ class UserServiceImplTest {
         }
     }
 
+    @Component
     static class TestUserServiceImpl extends UserServiceImpl {
-        private String id;
-
-        private TestUserServiceImpl(String id) {
-            this.id = id;
-        }
+        private String id = "idD";
 
         @Override
         protected void upgradeLevel(User user) {
@@ -266,6 +242,7 @@ class UserServiceImplTest {
         }
     }
 
+    @Component
     static class TestUserServiceException extends RuntimeException {
     }
 }

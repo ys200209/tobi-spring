@@ -1,6 +1,5 @@
 package com.example.tobispring.chap06.study.proxy;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.lang.reflect.Proxy;
@@ -8,7 +7,6 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.aop.ClassFilter;
 import org.springframework.aop.Pointcut;
@@ -87,16 +85,16 @@ public class DynamicProxyTest {
         classMethodPointcut.setMappedName("sayH*");
 
         // then
-        checkAdviced(new HelloTarget(), classMethodPointcut, true); // 클래스 포인트컷 적용
+        checkAdvised(new HelloTarget(), classMethodPointcut, true); // 클래스 포인트컷 적용
 
         class HelloWorld extends HelloTarget {};
-        checkAdviced(new HelloWorld(), classMethodPointcut, false); // 클래스 포인트컷 미적용
+        checkAdvised(new HelloWorld(), classMethodPointcut, false); // 클래스 포인트컷 미적용
 
         class HelloToby extends HelloTarget {};
-        checkAdviced(new HelloToby(), classMethodPointcut, true);
+        checkAdvised(new HelloToby(), classMethodPointcut, true);
     }
 
-    private void checkAdviced(Object target, Pointcut pointcut, boolean adviced) {
+    private void checkAdvised(Object target, Pointcut pointcut, boolean adviced) {
         ProxyFactoryBean proxyFactoryBean = new ProxyFactoryBean();
         proxyFactoryBean.setTarget(target);
         proxyFactoryBean.addAdvisor(new DefaultPointcutAdvisor(pointcut, new UppercaseAdvice()));
